@@ -496,7 +496,7 @@ feature_names = ['Rooms', 'Square', 'LifeSquare', 'KitchenSquare', 'Floor', 'Hou
                  'Helthcare_2', 'Shops_1', 'Shops_2']
 
 new_feature_names = ['DistrictSize', 'IsDistrictLarge', 'MedPriceByDistrict', 'DistrictAge',
-                     'IsDistrictNew', 'floor_cat', 'year_cat', 'MedPriceByFloorYear',
+                     'IsDistrictNew', 'MedPriceByFloorYear',
                      'LifeSquareFrac', 'KitchenSquareFrac', 'LifeKitchenBalance']
 
 #new_feature_names = ['DistrictSize', 'IsDistrictLarge', 'DistrictAge',
@@ -505,7 +505,7 @@ new_feature_names = ['DistrictSize', 'IsDistrictLarge', 'MedPriceByDistrict', 'D
 
 target_name = 'Price'
 
-"""#3. Создание и обучение модели <a class='anchor' id='ML'>
+"""##3. Создание и обучение модели <a class='anchor' id='ML'>
 
 ### 3.1 Разбиение на train и test  <a class='anchor' id='split'>
 """
@@ -601,12 +601,15 @@ evaluate_preds(y_train, y_train_preds, y_valid, y_valid_preds)
 ###3.5 Подбор параметров <a class='anchor' id='tune'>
 """
 
-'''params = {'max_features':[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 
-          'max_depth':[5, 10, 15, 20, 25]}
+'''params = {'max_features':[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14], 
+          'max_depth':[5, 10, 15, 20, 25],
+          'n_estimators': [100, 200, 400, 800, 1600],
+          'random_state':[10, 21, 42, 84],
+          'min_samples_leaf':[10, 50, 100, 200, 400]}
 
 gs = GridSearchCV(rf_model, params, 
                   scoring='r2', # метрика 
-                  cv=KFold(n_splits=2,   # k (кол-во разбиений/итераций) в кросс-валидации
+                  cv=KFold(n_splits=4,   # k (кол-во разбиений/итераций) в кросс-валидации
                            random_state=21, 
                            shuffle=True),
                   n_jobs=-1
@@ -625,7 +628,7 @@ evaluate_preds(y_train, y_train_preds, y_valid, y_valid_preds)'''
 ###3.6 Итоговая модель <a class='anchor' id='choosen_one'>
 """
 
-final_model = RandomForestRegressor(max_depth=15, max_features=8)
+final_model = RandomForestRegressor(max_depth=15, max_features=10)
 final_model.fit(X_train, y_train)
 
 y_train_preds = final_model.predict(X_train)
@@ -641,7 +644,7 @@ feature_importances = pd.DataFrame(zip(X_train.columns, final_model.feature_impo
 
 feature_importances.sort_values(by='importance', ascending=False)
 
-"""# 4. Обработка тестовых данных <a class='anchor' id='real_work'>"""
+"""## 4. Обработка тестовых данных <a class='anchor' id='real_work'>"""
 
 submit = pd.read_csv('/content/drive/My Drive/_ML/GB/5_py_alg/webinar6/sample_submission.csv')
 submit.head()
@@ -654,5 +657,5 @@ test_df.head()
 submit['Price'] = predictions
 submit.head()
 
-submit.to_csv('/content/drive/My Drive/_ML/GB/5_py_alg/webinar6/2021.10.GB_submission.csv', index=False, sep=',')
+submit.to_csv('/content/drive/My Drive/_ML/GB/5_py_alg/webinar6/2021.10.30_v4_GB_submission.csv', index=False, sep=',')
 
